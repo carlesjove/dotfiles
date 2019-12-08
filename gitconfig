@@ -1,0 +1,9 @@
+[alias]
+  l = log --pretty=colored
+  cam = commit -am
+  co = checkout
+[pretty]
+  colored = format:%Cred%h%Creset %s %Cgreen(%cr) %C(bold blue)%an%Creset
+[user]
+  name = Carles Jove i Buxeda
+  email = hola@carlus.cat
