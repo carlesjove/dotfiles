@@ -4,6 +4,8 @@
   co = checkout
 [pretty]
   colored = format:%Cred%h%Creset %s %Cgreen(%cr) %C(bold blue)%an%Creset
+[core]
+  excludesfile = ~/.gitignore
 [user]
   name = Carles Jove i Buxeda
   email = hola@carlus.cat
