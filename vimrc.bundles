@@ -21,19 +21,26 @@ let g:has_async = v:version >= 800 || has('nvim')
 
 call plug#begin('~/.vim/bundle')
 
-" Define bundles via Github repos
-Plug 'janko-m/vim-test'
+" If fzf has already been installed via Homebrew, use the existing fzf
+" Otherwise, install fzf. The `--all` flag makes fzf accessible outside of vim
+if isdirectory("/usr/local/opt/fzf")
+  Plug '/usr/local/opt/fzf'
+else
+  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+endif
+
+Plug 'junegunn/fzf.vim'
+Plug 'janko-m/vim-test' " Run tests on different granularities
 Plug 'pangloss/vim-javascript'
-Plug 'pbrisbin/vim-mkdir'
+Plug 'pbrisbin/vim-mkdir' " Creates a non/existing/directory/for/you.txt
 Plug 'tpope/vim-bundler'
-Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-endwise' " Closes certain structure automatically
+Plug 'tpope/vim-fugitive' " Git commodities inside Vim
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rake'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-surround'
+Plug 'tpope/vim-surround' " Delete, change or add code surroundings
 Plug 'vim-ruby/vim-ruby'
-Plug 'vim-scripts/tComment'
+Plug 'vim-scripts/tComment' " Comment and uncomment lines easily
 Plug 'mustache/vim-mustache-handlebars'
 
 call plug#end()
