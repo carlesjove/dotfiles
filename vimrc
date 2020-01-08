@@ -72,6 +72,11 @@ imap jj <esc>
 " Create WIP commit
 map <Leader>gw :!git add . && git commit -m "WIP"<cr>
 
+" Copy to clipboard
+" Select a text in visual mode and type ctrl + y to add to clipboard
+" Notice it requires xclip to be installed
+vmap <C-y> :!xclip -selection clipboard -f<CR>
+
 """"""""""""""""""""""""
 "
 " Plugins
