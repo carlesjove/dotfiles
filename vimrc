@@ -37,9 +37,6 @@ set number
 set relativenumber
 set numberwidth=5
 
-" Switch between the last two files
-nnoremap <Leader><Leader> <C-^>
-
 " Disable arrows to move around and force usage of hjkl
 nnoremap <Left> :echoe "Use h"<CR>
 nnoremap <Right> :echoe "Use l"<CR>
