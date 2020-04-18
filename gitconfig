@@ -7,5 +7,5 @@
 [core]
   excludesfile = ~/.gitignore
 [user]
-  name = Carles Jove i Buxeda
-  email = hola@carlus.cat
+	name = Carles Jove i Buxeda
+	email = hola@carlus.cat
