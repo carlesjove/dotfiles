@@ -13,6 +13,8 @@ alias migrate="rake db:migrate db:rollback && rake db:migrate db:test:prepare"
 # Pretty print the path
 alias path='echo $PATH | tr -s ":" "\n"'
 
+# No arguments: `git status`
+# With arguments: acts like `git`
 g() {
   if [[ $# -gt 0 ]]; then
     git "$@"
@@ -20,4 +22,3 @@ g() {
     git status
   fi
 }
-#compdef g=git
