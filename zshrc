@@ -2,7 +2,7 @@
 
 # modify the prompt to contain git branch name if applicable
 git_prompt_info() {
-  current_branch=$(git branch 2> /dev/null | tr -d '* ' )
+  current_branch=$(git branch --show-current)
   if [[ -n $current_branch ]]; then
     # \e[0;32m Start color, where 32 is green
     # \e[0m    End color
