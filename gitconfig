@@ -4,6 +4,8 @@
   co = checkout
 [pretty]
   colored = format:%Cred%h%Creset %s %Cgreen(%cr) %C(bold blue)%an%Creset
+[push]
+  default = current
 [core]
   excludesfile = ~/.gitignore
 [user]
