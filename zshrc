@@ -17,7 +17,7 @@ get_current_dir() {
   # \e[0;32m Start color, where 32 is green
   # \e[0m    End color
   # Info: https://en.wikipedia.org/wiki/ANSI_escape_code
-  echo "\e[0;90m%~\e[0m"
+  echo "\e[0;90m%2~\e[0m"
 }
 
 # Allow exported PS1 variable to override default prompt.
