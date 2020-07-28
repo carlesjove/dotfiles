@@ -29,10 +29,14 @@ setopt PROMPT_SUBST
 # %m Name of the computer (?)
 PS1='$(get_current_dir) $(git_prompt_info) %# '
 
-# Pyenv
+# Rbenv: Ruby version manager
+eval "$(rbenv init -)"
+
+# Pyenv: Python version manager
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
 
 # aliases
 [[ -f ~/.aliases ]] && source ~/.aliases
+
