@@ -1,5 +1,6 @@
 [alias]
   l = log --pretty=colored
+  s = status
   cam = commit -am
   co = checkout
 [pretty]
