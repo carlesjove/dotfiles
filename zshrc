@@ -7,7 +7,8 @@ git_prompt_info() {
     # \e[0;32m Start color, where 32 is green
     # \e[0m    End color
     # Info: https://en.wikipedia.org/wiki/ANSI_escape_code
-    echo "\e[0;32m($current_branch)\e[0m"
+    # echo "\e[0;32m($current_branch)\e[0m"
+    echo "($current_branch)"
   fi
 }
 
@@ -23,11 +24,14 @@ get_current_dir() {
 # Allow exported PS1 variable to override default prompt.
 setopt PROMPT_SUBST
 
+## Default prompt
+# PS1="%n@%m %1~ %# "
 # %~ Current directory, same as PWD. With a number it can be specified how many
 #    levels back to display. Ex: %2~ shows parent/child
 # %n Current user
 # %m Name of the computer (?)
-PS1='$(get_current_dir) $(git_prompt_info) %# '
+# PS1='$(get_current_dir) $(git_prompt_info) %# '
+PS1='%2~ $(git_prompt_info) %# '
 
 # Rbenv: Ruby version manager
 eval "$(rbenv init -)"
