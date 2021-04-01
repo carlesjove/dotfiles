@@ -44,12 +44,6 @@ fi
 # aliases
 [[ -f ~/.aliases ]] && source ~/.aliases
 
-# if [ -f ~/.git-completion.bash ]; then
-#   source ~/.git-completion.bash
-# fi
-zstyle ':completion:*:*:git:*' script ~/.git-completion.zsh
-
-
 # Node version manager
 export NVM_DIR="$HOME/.nvm"
 source "$NVM_DIR/nvm.sh"
