@@ -44,12 +44,6 @@ fi
 # aliases
 [[ -f ~/.aliases ]] && source ~/.aliases
 
-# if [ -f ~/.git-completion.bash ]; then
-#   source ~/.git-completion.bash
-# fi
-zstyle ':completion:*:*:git:*' script ~/.git-completion.zsh
-
-
 # Node version manager
 export NVM_DIR="$HOME/.nvm"
 source "$NVM_DIR/nvm.sh"
@@ -61,3 +55,5 @@ if [ -f '/Users/carles/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/carles/g
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/carles/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/carles/google-cloud-sdk/completion.zsh.inc'; fi
+
+export PATH="$HOME/.poetry/bin:$PATH"

@@ -12,3 +12,5 @@
 [user]
   name = Carles Jove i Buxeda
   email = hola@carlus.cat
+[pull]
+	rebase = false
