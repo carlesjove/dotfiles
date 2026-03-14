@@ -16,7 +16,8 @@ but I've removed everything that didn't met the criteria above.
 $ git clone https://github.com/carlesjove/dotfiles ~/dotfiles
 $ ln -s ~/dotfiles/vimrc ~/.vimrc
 $ ln -s ~/dotfiles/vimrc.bundles ~/.vimrc.bundles
-$ ls -s ~/dotfiles/gitconfig ~/.gitconfig
+$ ln -s ~/dotfiles/gitconfig ~/.gitconfig
+$ ln -s ~/dotfiles/psqlrc ~/.psqlrc
 ```
 
 After doing this you should open vim and run `PlugInstall`.

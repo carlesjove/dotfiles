@@ -1,0 +1,25 @@
+-- Use a descriptive prompt: "user@host/database # "
+\set PROMPT1 '%n@%m/%~%R%# '
+\set PROMPT2 '[more] %R > '
+
+-- Autocomplete keywords in uppercase
+\set COMP_KEYWORD_CASE upper
+
+-- Display null values clearly
+\pset null '(null)'
+
+-- Show query execution time
+\timing
+
+-- Expanded output auto-switches based on terminal width
+\x auto
+
+-- Keep a per-database history file
+\set HISTFILE ~/.psql_history- :DBNAME
+\set HISTSIZE 2000
+
+-- Rollback failed transactions interactively so the session stays usable
+\set ON_ERROR_ROLLBACK interactive
+
+-- Verbose error reporting
+\set VERBOSITY verbose
