@@ -40,6 +40,11 @@ eval "$(rbenv init -)"
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+
 
 # aliases
 [[ -f ~/.aliases ]] && source ~/.aliases
@@ -57,3 +62,4 @@ if [ -f '/Users/carles/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/carles/g
 if [ -f '/Users/carles/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/carles/google-cloud-sdk/completion.zsh.inc'; fi
 
 export PATH="$HOME/.poetry/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
