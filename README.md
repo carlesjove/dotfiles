@@ -30,12 +30,17 @@ individually:
 
 ```
 $ ln -s ~/dotfiles/claude/settings.json ~/.claude/settings.json
+$ ln -s ~/dotfiles/claude/CLAUDE.md ~/.claude/CLAUDE.md
 $ ln -s ~/dotfiles/claude/commands ~/.claude/commands
 ```
 
-`settings.json` holds preferences (model, theme, effort level) and, later,
-permissions. `commands/` holds custom slash commands: a file `foo.md` becomes
-`/foo`.
+`settings.json` holds preferences (model, effort level) and the permissions
+allowlist. `CLAUDE.md` holds instructions that apply to every session in every
+directory, such as working with TDD. `commands/` holds custom slash commands: a
+file `foo.md` becomes `/foo`.
+
+Note that `theme` is stored in `~/.claude.json`, not in `settings.json`, so it
+does not travel and has to be set once per machine.
 
 Do not symlink `~/.claude` itself, and do not commit `~/.claude.json` (in the
 home directory, not in `~/.claude`) — it contains MCP server config and may
