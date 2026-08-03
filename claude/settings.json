@@ -1,0 +1,11 @@
+{
+  "model": "opus[1m]",
+  "effortLevel": "medium",
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
+  "theme": "light",
+  "voiceEnabled": true,
+  "autoCompactEnabled": false
+}

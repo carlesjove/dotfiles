@@ -20,3 +20,23 @@ $ ls -s ~/dotfiles/gitconfig ~/.gitconfig
 ```
 
 After doing this you should open vim and run `PlugInstall`.
+
+## Claude Code
+
+Claude Code keeps its config in `~/.claude`, but that directory also holds
+session transcripts, caches and credentials, which must never be committed.
+So only the portable bits live here, in `claude/`, and get symlinked
+individually:
+
+```
+$ ln -s ~/dotfiles/claude/settings.json ~/.claude/settings.json
+$ ln -s ~/dotfiles/claude/commands ~/.claude/commands
+```
+
+`settings.json` holds preferences (model, theme, effort level) and, later,
+permissions. `commands/` holds custom slash commands: a file `foo.md` becomes
+`/foo`.
+
+Do not symlink `~/.claude` itself, and do not commit `~/.claude.json` (in the
+home directory, not in `~/.claude`) — it contains MCP server config and may
+hold API tokens.
