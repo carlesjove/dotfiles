@@ -39,7 +39,13 @@
       "Bash(kubectl logs:*)",
       "Bash(kubectl describe:*)",
       "Bash(kubectl config current-context)",
-      "Bash(kubectl config get-contexts)"
+      "Bash(kubectl config get-contexts)",
+      "mcp__claude_ai_Google_Drive__search_files",
+      "mcp__claude_ai_Google_Drive__list_recent_files",
+      "mcp__claude_ai_Google_Drive__read_file_content",
+      "mcp__claude_ai_Google_Drive__download_file_content",
+      "mcp__claude_ai_Google_Drive__get_file_metadata",
+      "mcp__claude_ai_Google_Drive__get_file_permissions"
     ]
   }
 }
