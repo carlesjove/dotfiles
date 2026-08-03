@@ -42,6 +42,13 @@ file `foo.md` becomes `/foo`.
 Note that `theme` is stored in `~/.claude.json`, not in `settings.json`, so it
 does not travel and has to be set once per machine.
 
+### Private context
+
+This repo is public, so anything internal stays out of it. `CLAUDE.md` imports
+extra files from `~/.claude/private/` with `@` lines; those files are not
+version-controlled here and a missing one is harmless. To sync them across
+machines, keep them in a private repo and symlink into `~/.claude/private/`.
+
 Do not symlink `~/.claude` itself, and do not commit `~/.claude.json` (in the
 home directory, not in `~/.claude`) — it contains MCP server config and may
 hold API tokens.
