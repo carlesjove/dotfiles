@@ -63,3 +63,9 @@ if [ -f '/Users/carles/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ca
 
 export PATH="$HOME/.poetry/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+
+export PATH="/usr/local/opt/postgresql@18/bin:$PATH"
+export PATH="/usr/local/opt/postgres/bin:$PATH"
+
+# Added by Antigravity CLI installer
+export PATH="/Users/carles/.local/bin:$PATH"
