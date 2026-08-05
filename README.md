@@ -14,9 +14,12 @@ but I've removed everything that didn't met the criteria above.
 
 ```
 $ git clone https://github.com/carlesjove/dotfiles ~/dotfiles
+$ ln -s ~/dotfiles/zshrc ~/.zshrc
+$ ln -s ~/dotfiles/aliases ~/.aliases
+$ ln -s ~/dotfiles/gitconfig ~/.gitconfig
+$ ln -s ~/dotfiles/gitignore ~/.gitignore
 $ ln -s ~/dotfiles/vimrc ~/.vimrc
 $ ln -s ~/dotfiles/vimrc.bundles ~/.vimrc.bundles
-$ ls -s ~/dotfiles/gitconfig ~/.gitconfig
 ```
 
 After doing this you should open vim and run `PlugInstall`.
@@ -24,14 +27,18 @@ After doing this you should open vim and run `PlugInstall`.
 ## Claude Code
 
 Claude Code keeps its config in `~/.claude`, but that directory also holds
-session transcripts, caches and credentials, which must never be committed.
-So only the portable bits live here, in `claude/`, and get symlinked
-individually:
+session transcripts, caches, credentials, and mutable runtime state (such as
+model selection and permission allowlists) which should not pollute the dotfiles
+repository.
+
+Baseline configurations live in `claude/` and are copied to `~/.claude/` during
+setup so local runtime changes don't dirty the git working tree:
 
 ```
-$ ln -s ~/dotfiles/claude/settings.json ~/.claude/settings.json
-$ ln -s ~/dotfiles/claude/CLAUDE.md ~/.claude/CLAUDE.md
-$ ln -s ~/dotfiles/claude/commands ~/.claude/commands
+$ mkdir -p ~/.claude
+$ cp ~/dotfiles/claude/settings.json ~/.claude/settings.json
+$ cp ~/dotfiles/claude/CLAUDE.md ~/.claude/CLAUDE.md
+$ cp -R ~/dotfiles/claude/commands ~/.claude/commands
 ```
 
 `settings.json` holds preferences (model, effort level) and the permissions
