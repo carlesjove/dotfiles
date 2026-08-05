@@ -22,6 +22,12 @@ $ ln -s ~/dotfiles/vimrc ~/.vimrc
 $ ln -s ~/dotfiles/vimrc.bundles ~/.vimrc.bundles
 ```
 
+Alternatively, you can run the interactive setup script which prompts [Y/n] before taking action on each file:
+
+```bash
+$ ~/dotfiles/install.sh
+```
+
 After doing this you should open vim and run `PlugInstall`.
 
 ## AI Agents (`agents/`)
@@ -47,6 +53,16 @@ $ cp ~/dotfiles/agents/antigravity/GEMINI.md ~/.gemini/GEMINI.md
 ```
 
 `agents/rules/tdd.md` holds universal TDD guidelines and is imported by both `CLAUDE.md` and `GEMINI.md` via `@` import lines.
+
+### How Agent Rules Work
+
+Generic rules live as standalone markdown files in `agents/rules/` (e.g. `agents/rules/tdd.md`). Agent-specific files (`agents/claude/CLAUDE.md`, `agents/antigravity/GEMINI.md`) reference them using `@` import lines, such as `@~/dotfiles/agents/rules/tdd.md`.
+
+- **Modifying an existing rule**: Edit the rule file in `agents/rules/`. Changes are active immediately in your next session with any agent without needing to re-copy or re-run any setup script.
+- **Adding a new rule**:
+  1. Create the new markdown file in `agents/rules/` (e.g. `agents/rules/git-style.md`).
+  2. Add `@~/dotfiles/agents/rules/git-style.md` to `agents/claude/CLAUDE.md` and `agents/antigravity/GEMINI.md`.
+  3. Run `~/dotfiles/install.sh` (or re-copy `CLAUDE.md` and `GEMINI.md` to `~/.claude/` and `~/.gemini/`).
 
 ### Private context
 
