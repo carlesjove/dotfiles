@@ -1,14 +1,13 @@
 Welcome to my dotfiles :-)
 
-For years I have been using community maintained dotfiles, mostly Thoughtbot's
-dotfiles. Now I have switched from macOS to Linux and I'm taking this as an
-opportunity to start my own dotfiles, with only stuff that:
+For years I have been using community maintained dotfiles, but at some point I
+decided to start my own with only stuff that:
 
 - I need
 - I understand
 
-My current .vimrc still has a lot of stuff coming from Thoughtbot's (thanks!),
-but I've removed everything that didn't met the criteria above.
+My current .vimrc still has a lot of stuff coming from Thoughtbot's dotfiles (thanks!),
+but I've removed everything that didn't meet the criteria above.
 
 ## How to use
 
