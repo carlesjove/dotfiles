@@ -1,13 +1,5 @@
 {
-  "model": "opus[1m]",
-  "effortLevel": "medium",
-  "voice": {
-    "enabled": true,
-    "mode": "hold"
-  },
-  "theme": "light",
-  "voiceEnabled": true,
-  "autoCompactEnabled": false,
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Bash(grep:*)",
@@ -70,5 +62,14 @@
       "mcp__claude_ai_Atlassian__getTeamworkGraphContext",
       "mcp__claude_ai_Atlassian__getTeamworkGraphObject"
     ]
-  }
+  },
+  "model": "opus[1m]",
+  "effortLevel": "medium",
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
+  "theme": "light",
+  "autoCompactEnabled": false,
+  "voiceEnabled": true
 }
