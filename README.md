@@ -24,30 +24,29 @@ $ ln -s ~/dotfiles/vimrc.bundles ~/.vimrc.bundles
 
 After doing this you should open vim and run `PlugInstall`.
 
-## Claude Code
+## AI Agents (`agents/`)
 
-Claude Code keeps its config in `~/.claude`, but that directory also holds
-session transcripts, caches, credentials, and mutable runtime state (such as
-model selection and permission allowlists) which should not pollute the dotfiles
-repository.
+AI coding assistant configurations live under `agents/` to keep root clean and modular:
 
-Baseline configurations live in `claude/` and are copied to `~/.claude/` during
-setup so local runtime changes don't dirty the git working tree:
+- `agents/rules/`: Shared, agent-agnostic guidelines (e.g. `tdd.md`).
+- `agents/claude/`: Claude Code specific configuration (`CLAUDE.md`, `settings.json`, `commands/`).
+- `agents/antigravity/`: Antigravity specific configuration (`GEMINI.md`).
+
+To prevent runtime state changes (such as model selection or permission allowlists) from polluting the dotfiles git repository, baseline files are copied to local environment directories during setup:
 
 ```
+# Claude Code setup
 $ mkdir -p ~/.claude
-$ cp ~/dotfiles/claude/settings.json ~/.claude/settings.json
-$ cp ~/dotfiles/claude/CLAUDE.md ~/.claude/CLAUDE.md
-$ cp -R ~/dotfiles/claude/commands ~/.claude/commands
+$ cp ~/dotfiles/agents/claude/settings.json ~/.claude/settings.json
+$ cp ~/dotfiles/agents/claude/CLAUDE.md ~/.claude/CLAUDE.md
+$ cp -R ~/dotfiles/agents/claude/commands ~/.claude/commands
+
+# Antigravity setup
+$ mkdir -p ~/.gemini
+$ cp ~/dotfiles/agents/antigravity/GEMINI.md ~/.gemini/GEMINI.md
 ```
 
-`settings.json` holds preferences (model, effort level) and the permissions
-allowlist. `CLAUDE.md` holds instructions that apply to every session in every
-directory, such as working with TDD. `commands/` holds custom slash commands: a
-file `foo.md` becomes `/foo`.
-
-Note that `theme` is stored in `~/.claude.json`, not in `settings.json`, so it
-does not travel and has to be set once per machine.
+`agents/rules/tdd.md` holds universal TDD guidelines and is imported by both `CLAUDE.md` and `GEMINI.md` via `@` import lines.
 
 ### Private context
 
@@ -56,6 +55,4 @@ extra files from `~/.claude/private/` with `@` lines; those files are not
 version-controlled here and a missing one is harmless. To sync them across
 machines, keep them in a private repo and symlink into `~/.claude/private/`.
 
-Do not symlink `~/.claude` itself, and do not commit `~/.claude.json` (in the
-home directory, not in `~/.claude`) — it contains MCP server config and may
-hold API tokens.
+Do not symlink `~/.claude` or `~/.gemini` directories themselves, and do not commit `~/.claude.json` — it contains MCP server config and may hold API tokens.
