@@ -3,9 +3,14 @@
 # Dotfiles installer & interactive sync script.
 # Idempotent, non-destructive, and asks confirmation at every step.
 #
-# Usage: install.sh [-y]
-#   -y   Non-interactive: accept the default answer for every prompt. Defaults
-#        are the safe branch, so this never overwrites an existing file.
+# Usage: install.sh [-y] [-h]
+#   -y   Non-interactive: accept the default answer for every prompt.
+#   -h   Show this help.
+#
+# Safe to re-run to pick up updates. Re-running never discards a local edit
+# without either backing it up first or leaving the file alone entirely.
+# The one exception: a file in ~/.claude/commands/ that you edited locally AND
+# that also exists in dotfiles is overwritten with no backup.
 
 set -euo pipefail
 
@@ -15,7 +20,7 @@ ASSUME_DEFAULTS=false
 while getopts ":yh" opt; do
   case "$opt" in
     y) ASSUME_DEFAULTS=true ;;
-    h) sed -n '3,7p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    h) sed -n '3,${/^#/!q;p;}' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
     \?) echo "Unknown option: -$OPTARG" >&2; exit 1 ;;
   esac
 done
