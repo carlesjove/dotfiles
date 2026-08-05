@@ -1,6 +1,13 @@
 # How I work
 
+<!-- Managed by dotfiles/install.sh — it overwrites this file. Machine-specific
+     instructions belong in ~/.gemini/local.md, which is never overwritten. -->
+
 @~/dotfiles/agents/rules/tdd.md
+
+## This machine
+
+@~/.gemini/local.md
 
 ## Antigravity Guidelines
 

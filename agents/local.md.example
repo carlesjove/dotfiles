@@ -1,0 +1,13 @@
+# Machine-local agent instructions
+
+Seeded by `install.sh` and then left alone forever — it is yours to edit and is
+never version-controlled in dotfiles.
+
+Put anything here that should not be shared across machines:
+
+- Paths and tooling that only exist on this box.
+- Per-project exemptions from the shared rules in `agents/rules/`.
+- Anything about a private or work project.
+
+Secrets and internal team details are a separate concern; those live in
+`~/.claude/private/`.

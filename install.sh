@@ -108,6 +108,48 @@ copy_file() {
   fi
 }
 
+# For files that hold no local content, only imports of dotfiles-tracked rules.
+# Overwriting is always safe, so don't ask a keep-or-destroy question whose
+# every answer is wrong: "keep" strands the machine on stale rules, "overwrite"
+# would eat local edits if there were any. There are none — see seed_file.
+install_managed_file() {
+  local src="$1"
+  local dest="$2"
+
+  if cmp -s "$src" "$dest"; then
+    echo "  ✔ Up to date: $dest"
+    return 0
+  fi
+
+  if prompt_ask "Install managed $dest (overwrites, holds no local content)?"; then
+    mkdir -p "$(dirname "$dest")"
+    cp "$src" "$dest"
+    echo "  ✅ Installed $dest"
+  else
+    echo "  ⏭️ Skipped $dest"
+  fi
+}
+
+# Create dest from a template only if it is absent. Once it exists it belongs to
+# the machine and the installer never touches it again.
+seed_file() {
+  local src="$1"
+  local dest="$2"
+
+  if [[ -e "$dest" ]]; then
+    echo "  ✔ Kept local file: $dest"
+    return 0
+  fi
+
+  if prompt_ask "Seed empty local override file $dest?"; then
+    mkdir -p "$(dirname "$dest")"
+    cp "$src" "$dest"
+    echo "  ✅ Seeded $dest"
+  else
+    echo "  ⏭️ Skipped $dest"
+  fi
+}
+
 # Merge a directory's *contents* into dest. `cp -R src dest` would nest as
 # dest/$(basename src) once dest exists, so the trailing /. matters.
 # Merge, not mirror: files you add locally survive, but files deleted from
@@ -140,13 +182,15 @@ link_file "$DOTFILES_DIR/vimrc.bundles" "$HOME/.vimrc.bundles"
 
 echo ""
 echo "--- Claude Code Setup ---"
-copy_file "$DOTFILES_DIR/agents/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+install_managed_file "$DOTFILES_DIR/agents/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+seed_file "$DOTFILES_DIR/agents/local.md.example" "$HOME/.claude/local.md"
 copy_file "$DOTFILES_DIR/agents/claude/settings.json" "$HOME/.claude/settings.json"
 sync_dir "$DOTFILES_DIR/agents/claude/commands" "$HOME/.claude/commands"
 
 echo ""
 echo "--- Antigravity Setup ---"
-copy_file "$DOTFILES_DIR/agents/antigravity/GEMINI.md" "$HOME/.gemini/GEMINI.md"
+install_managed_file "$DOTFILES_DIR/agents/antigravity/GEMINI.md" "$HOME/.gemini/GEMINI.md"
+seed_file "$DOTFILES_DIR/agents/local.md.example" "$HOME/.gemini/local.md"
 # Antigravity's CLI reads its own copy; link it so the two cannot drift.
 link_file "$HOME/.gemini/GEMINI.md" "$HOME/.gemini/antigravity-cli/GEMINI.md"
 

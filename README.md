@@ -37,22 +37,25 @@ AI coding assistant configurations live under `agents/` to keep root clean and m
 - `agents/rules/`: Shared, agent-agnostic guidelines (e.g. `tdd.md`).
 - `agents/claude/`: Claude Code specific configuration (`CLAUDE.md`, `settings.json`, `commands/`).
 - `agents/antigravity/`: Antigravity specific configuration (`GEMINI.md`).
+- `agents/local.md.example`: Template for per-machine overrides. See below.
 
-To prevent runtime state changes (such as model selection or permission allowlists) from polluting the dotfiles git repository, baseline files are copied to local environment directories during setup:
-
-```
-# Claude Code setup
-$ mkdir -p ~/.claude
-$ cp ~/dotfiles/agents/claude/settings.json ~/.claude/settings.json
-$ cp ~/dotfiles/agents/claude/CLAUDE.md ~/.claude/CLAUDE.md
-$ cp -R ~/dotfiles/agents/claude/commands ~/.claude/commands
-
-# Antigravity setup
-$ mkdir -p ~/.gemini
-$ cp ~/dotfiles/agents/antigravity/GEMINI.md ~/.gemini/GEMINI.md
-```
+To prevent runtime state changes (such as model selection or permission allowlists) from polluting the dotfiles git repository, baseline files are copied to local environment directories during setup. Run `install.sh` and it does all of this for you.
 
 `agents/rules/tdd.md` holds universal TDD guidelines and is imported by both `CLAUDE.md` and `GEMINI.md` via `@` import lines.
+
+### Three kinds of file
+
+Every file the installer puts in `~/.claude` or `~/.gemini` falls into one of three buckets, and which bucket decides whether the installer may overwrite it:
+
+| Bucket | Example | Installer behaviour |
+|---|---|---|
+| **Managed** — only `@` imports, no local content | `CLAUDE.md`, `GEMINI.md` | Overwritten, no questions asked |
+| **Local** — yours, per machine, untracked | `~/.claude/local.md` | Created once if absent, then never touched |
+| **Runtime-mutated** — the agent writes to it | `settings.json` | Copied, but asks before overwriting |
+
+This split is what lets a rule change propagate to every machine without the installer ever facing a choice where both answers are wrong. Keeping local edits out of the managed files is the whole point: put them in `~/.claude/local.md` (or `~/.gemini/local.md`) instead, which the managed file imports.
+
+Anything specific to one machine or to a private project belongs in the local file — including per-project exemptions from the shared rules, such as a repo that opts out of TDD.
 
 ### How Agent Rules Work
 
@@ -62,7 +65,9 @@ Generic rules live as standalone markdown files in `agents/rules/` (e.g. `agents
 - **Adding a new rule**:
   1. Create the new markdown file in `agents/rules/` (e.g. `agents/rules/git-style.md`).
   2. Add `@~/dotfiles/agents/rules/git-style.md` to `agents/claude/CLAUDE.md` and `agents/antigravity/GEMINI.md`.
-  3. Run `~/dotfiles/install.sh` (or re-copy `CLAUDE.md` and `GEMINI.md` to `~/.claude/` and `~/.gemini/`).
+  3. Run `~/dotfiles/install.sh` to push the new import line out. This overwrites the managed `CLAUDE.md` / `GEMINI.md`, which is safe by design — nothing local lives in them.
+
+Note that `@` imports are resolved by the agent, not by this repo, so this only works for agents that implement them (Claude Code and Gemini CLI do). An agent that reads its instruction file literally would need the rules concatenated in instead.
 
 ### Private context
 
