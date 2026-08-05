@@ -2,10 +2,23 @@
 #
 # Dotfiles installer & interactive sync script.
 # Idempotent, non-destructive, and asks confirmation at every step.
+#
+# Usage: install.sh [-y]
+#   -y   Non-interactive: accept the default answer for every prompt. Defaults
+#        are the safe branch, so this never overwrites an existing file.
 
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ASSUME_DEFAULTS=false
+
+while getopts ":yh" opt; do
+  case "$opt" in
+    y) ASSUME_DEFAULTS=true ;;
+    h) sed -n '3,7p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    \?) echo "Unknown option: -$OPTARG" >&2; exit 1 ;;
+  esac
+done
 
 prompt_ask() {
   local prompt_msg="$1"
@@ -13,9 +26,17 @@ prompt_ask() {
   local reply
 
   if [[ "$default" == "y" ]]; then
+    if [[ "$ASSUME_DEFAULTS" == true ]]; then
+      echo "$prompt_msg [Y/n] Y (assumed)"
+      return 0
+    fi
     read -rp "$prompt_msg [Y/n] " reply
     reply="${reply:-y}"
   else
+    if [[ "$ASSUME_DEFAULTS" == true ]]; then
+      echo "$prompt_msg [y/N] N (assumed)"
+      return 1
+    fi
     read -rp "$prompt_msg [y/N] " reply
     reply="${reply:-n}"
   fi
@@ -24,6 +45,22 @@ prompt_ask() {
     [yY][eE][sS]|[yY]) return 0 ;;
     *) return 1 ;;
   esac
+}
+
+# Move an existing path aside without ever clobbering a previous backup.
+backup_path() {
+  local target="$1"
+  local backup="${target}.bak.$(date +%Y%m%d%H%M%S)"
+
+  # Same-second reruns would otherwise collide.
+  local n=1
+  while [[ -e "$backup" || -L "$backup" ]]; do
+    backup="${target}.bak.$(date +%Y%m%d%H%M%S).$n"
+    n=$((n + 1))
+  done
+
+  mv "$target" "$backup"
+  echo "$backup"
 }
 
 link_file() {
@@ -38,8 +75,9 @@ link_file() {
   if prompt_ask "Symlink $dest -> $src?"; then
     mkdir -p "$(dirname "$dest")"
     if [[ -e "$dest" || -L "$dest" ]]; then
-      echo "  ⚠️ Existing file found. Backing up $dest to ${dest}.bak"
-      mv "$dest" "${dest}.bak"
+      local backup
+      backup="$(backup_path "$dest")"
+      echo "  ⚠️ Existing file found. Backed up to $backup"
     fi
     ln -s "$src" "$dest"
     echo "  ✅ Linked $dest"
@@ -56,15 +94,32 @@ copy_file() {
     mkdir -p "$(dirname "$dest")"
     if [[ -e "$dest" ]]; then
       if prompt_ask "  File $dest already exists. Overwrite?" "n"; then
-        cp -R "$src" "$dest"
+        cp "$src" "$dest"
         echo "  ✅ Overwritten $dest"
       else
         echo "  ⏭️ Kept existing $dest"
       fi
     else
-      cp -R "$src" "$dest"
+      cp "$src" "$dest"
       echo "  ✅ Copied $dest"
     fi
+  else
+    echo "  ⏭️ Skipped $dest"
+  fi
+}
+
+# Merge a directory's *contents* into dest. `cp -R src dest` would nest as
+# dest/$(basename src) once dest exists, so the trailing /. matters.
+# Merge, not mirror: files you add locally survive, but files deleted from
+# dotfiles are not removed from dest.
+sync_dir() {
+  local src="$1"
+  local dest="$2"
+
+  if prompt_ask "Sync contents of $src -> $dest/?"; then
+    mkdir -p "$dest"
+    cp -R "$src/." "$dest/"
+    echo "  ✅ Synced $dest"
   else
     echo "  ⏭️ Skipped $dest"
   fi
@@ -87,12 +142,13 @@ echo ""
 echo "--- Claude Code Setup ---"
 copy_file "$DOTFILES_DIR/agents/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 copy_file "$DOTFILES_DIR/agents/claude/settings.json" "$HOME/.claude/settings.json"
-copy_file "$DOTFILES_DIR/agents/claude/commands" "$HOME/.claude/commands"
+sync_dir "$DOTFILES_DIR/agents/claude/commands" "$HOME/.claude/commands"
 
 echo ""
 echo "--- Antigravity Setup ---"
 copy_file "$DOTFILES_DIR/agents/antigravity/GEMINI.md" "$HOME/.gemini/GEMINI.md"
-copy_file "$DOTFILES_DIR/agents/antigravity/GEMINI.md" "$HOME/.gemini/antigravity-cli/GEMINI.md"
+# Antigravity's CLI reads its own copy; link it so the two cannot drift.
+link_file "$HOME/.gemini/GEMINI.md" "$HOME/.gemini/antigravity-cli/GEMINI.md"
 
 echo ""
 echo "=========================================="
