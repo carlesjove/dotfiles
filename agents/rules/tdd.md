@@ -18,7 +18,8 @@ Never report work as done based on the code looking correct. Report it as done w
 
 Some work is genuinely not test-first: exploratory spikes, one-off scripts, config and infrastructure changes, debugging where the reproduction *is* the test. In those cases say which it is and why in one line, then proceed. Don't silently skip the tests, and don't ask permission for the obvious cases.
 
-Never use TDD for scripts in `l-carles-scripts`.
+Individual projects may exempt themselves from TDD entirely. That belongs in the
+project's own agent instructions, not here.
 
 ### Reversed TDD as an option
 
