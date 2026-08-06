@@ -40,6 +40,8 @@ AI coding assistant configurations live under `agents/` to keep root clean and m
 
 To prevent runtime state changes (such as model selection or permission allowlists) from polluting the dotfiles git repository, baseline files are copied to local environment directories during setup. Run `install.sh` and it does all of this for you.
 
+- `agents/expand-imports.sh`: Inlines `@` imports for agents that don't resolve them. See below.
+
 `agents/rules/tdd.md` holds universal TDD guidelines and is imported by both `CLAUDE.md` and `GEMINI.md` via `@` import lines.
 
 ### Three kinds of file
@@ -66,7 +68,19 @@ Generic rules live as standalone markdown files in `agents/rules/` (e.g. `agents
   2. Add `@~/dotfiles/agents/rules/git-style.md` to `agents/claude/CLAUDE.md` and `agents/antigravity/GEMINI.md`.
   3. Run `~/dotfiles/install.sh` to push the new import line out. This overwrites the managed `CLAUDE.md` / `GEMINI.md`, which is safe by design — nothing local lives in them.
 
-Note that `@` imports are resolved by the agent, not by this repo, so this only works for agents that implement them (Claude Code and Gemini CLI do). An agent that reads its instruction file literally would need the rules concatenated in instead.
+### Agents that ignore `@` imports
+
+`@` imports are resolved by the agent, not by this repo. Claude Code does resolve them; Antigravity does not — it reads `GEMINI.md` literally, gets the string `@~/dotfiles/agents/rules/tdd.md`, and silently follows none of the rules.
+
+So for those agents `install.sh` pipes the file through `agents/expand-imports.sh`, which replaces every line that is nothing but `@path` with the contents of that path. A path that doesn't exist on this machine becomes a one-line note rather than an error.
+
+The import lines stay in the tracked file, so nothing needs rewriting if an agent gains `@` support later. The trade-off is that the *installed* file is a snapshot: for these agents, editing a rule needs another `install.sh` run to take effect. Agents that resolve imports themselves keep picking up rule edits in the next session with no install step.
+
+Tests for the expander live in `tests/` and need nothing installed:
+
+```bash
+$ ~/dotfiles/tests/expand_imports_test.sh
+```
 
 ### Private context
 

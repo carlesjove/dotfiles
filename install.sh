@@ -135,6 +135,38 @@ install_managed_file() {
   fi
 }
 
+# Same contract as install_managed_file, but for agents that do not resolve `@`
+# import lines: the file is installed with its imports replaced by the contents
+# of the files they point at. The installed copy is therefore a snapshot — a
+# rule edit needs another install.sh run to reach these agents.
+install_expanded_file() {
+  local src="$1"
+  local dest="$2"
+  local built
+  built="$(mktemp)"
+
+  if ! "$DOTFILES_DIR/agents/expand-imports.sh" "$src" > "$built"; then
+    rm -f "$built"
+    echo "  ❌ Failed to expand imports in $src; left $dest alone" >&2
+    return 1
+  fi
+
+  if cmp -s "$built" "$dest"; then
+    rm -f "$built"
+    echo "  ✔ Up to date: $dest"
+    return 0
+  fi
+
+  if prompt_ask "Install managed $dest (imports inlined, overwrites, holds no local content)?"; then
+    mkdir -p "$(dirname "$dest")"
+    cp "$built" "$dest"
+    echo "  ✅ Installed $dest with imports inlined"
+  else
+    echo "  ⏭️ Skipped $dest"
+  fi
+  rm -f "$built"
+}
+
 # Create dest from a template only if it is absent. Once it exists it belongs to
 # the machine and the installer never touches it again.
 seed_file() {
@@ -194,8 +226,10 @@ sync_dir "$DOTFILES_DIR/agents/claude/commands" "$HOME/.claude/commands"
 
 echo ""
 echo "--- Antigravity Setup ---"
-install_managed_file "$DOTFILES_DIR/agents/antigravity/GEMINI.md" "$HOME/.gemini/GEMINI.md"
+# Antigravity ignores `@` import lines, so its GEMINI.md is installed with the
+# imports inlined. local.md is seeded first because it is one of them.
 seed_file "$DOTFILES_DIR/agents/local.md.example" "$HOME/.gemini/local.md"
+install_expanded_file "$DOTFILES_DIR/agents/antigravity/GEMINI.md" "$HOME/.gemini/GEMINI.md"
 # Antigravity's CLI reads its own copy; link it so the two cannot drift.
 link_file "$HOME/.gemini/GEMINI.md" "$HOME/.gemini/antigravity-cli/GEMINI.md"
 
