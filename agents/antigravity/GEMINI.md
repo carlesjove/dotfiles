@@ -1,7 +1,9 @@
 # How I work
 
-<!-- Managed by dotfiles/install.sh — it overwrites this file. Machine-specific
-     instructions belong in ~/.gemini/local.md, which is never overwritten. -->
+<!-- Managed by dotfiles/install.sh — it overwrites this file, with the @ imports
+     below inlined unless it was run with --no-expand. Machine-specific
+     instructions belong in ~/.gemini/local.md, which is never overwritten;
+     re-run install.sh after editing it. -->
 
 @~/dotfiles/agents/rules/tdd.md
 

@@ -40,7 +40,7 @@ AI coding assistant configurations live under `agents/` to keep root clean and m
 
 To prevent runtime state changes (such as model selection or permission allowlists) from polluting the dotfiles git repository, baseline files are copied to local environment directories during setup. Run `install.sh` and it does all of this for you.
 
-- `agents/expand-imports.sh`: Inlines `@` imports for agents that don't resolve them. See below.
+- `agents/expand-imports.sh`: Inlines `@` imports so an agent doesn't have to resolve them itself. See below.
 
 `agents/rules/tdd.md` holds universal TDD guidelines and is imported by both `CLAUDE.md` and `GEMINI.md` via `@` import lines.
 
@@ -62,24 +62,33 @@ Anything specific to one machine or to a private project belongs in the local fi
 
 Generic rules live as standalone markdown files in `agents/rules/` (e.g. `agents/rules/tdd.md`). Agent-specific files (`agents/claude/CLAUDE.md`, `agents/antigravity/GEMINI.md`) reference them using `@` import lines, such as `@~/dotfiles/agents/rules/tdd.md`.
 
-- **Modifying an existing rule**: Edit the rule file in `agents/rules/`. Changes are active immediately in your next session with any agent without needing to re-copy or re-run any setup script.
+- **Modifying an existing rule**: Edit the rule file in `agents/rules/`, then run `~/dotfiles/install.sh` to push the change out to the installed files.
 - **Adding a new rule**:
   1. Create the new markdown file in `agents/rules/` (e.g. `agents/rules/git-style.md`).
   2. Add `@~/dotfiles/agents/rules/git-style.md` to `agents/claude/CLAUDE.md` and `agents/antigravity/GEMINI.md`.
   3. Run `~/dotfiles/install.sh` to push the new import line out. This overwrites the managed `CLAUDE.md` / `GEMINI.md`, which is safe by design — nothing local lives in them.
 
-### Agents that ignore `@` imports
+### Imports are inlined at install time
 
-`@` imports are resolved by the agent, not by this repo. Claude Code does resolve them; Antigravity does not — it reads `GEMINI.md` literally, gets the string `@~/dotfiles/agents/rules/tdd.md`, and silently follows none of the rules.
+`@` imports are a feature of the agent, not of this repo, and whether a given agent resolves them is its own undocumented business. Claude Code does; Antigravity does not — it reads `GEMINI.md` literally, gets the string `@~/dotfiles/agents/rules/tdd.md`, and silently follows none of the rules. That failure is invisible: the file looks correct and the agent just quietly has no rules.
 
-So for those agents `install.sh` pipes the file through `agents/expand-imports.sh`, which replaces every line that is nothing but `@path` with the contents of that path. A path that doesn't exist on this machine becomes a one-line note rather than an error.
+So `install.sh` doesn't rely on it for anyone. Every agent's instruction file is piped through `agents/expand-imports.sh`, which replaces every line that is nothing but `@path` with the contents of that path, and the *expanded* file is what gets installed. A path that doesn't exist on this machine becomes a one-line note rather than an error, so a machine without the optional private files still gets a usable file.
 
-The import lines stay in the tracked file, so nothing needs rewriting if an agent gains `@` support later. The trade-off is that the *installed* file is a snapshot: for these agents, editing a rule needs another `install.sh` run to take effect. Agents that resolve imports themselves keep picking up rule edits in the next session with no install step.
+Because `local.md` is one of those imports, `install.sh` seeds it *before* installing the file that imports it — otherwise the first install on a new machine would inline a note saying the local file is absent.
 
-Tests for the expander live in `tests/` and need nothing installed:
+The import lines stay in the tracked source files, so they remain the single place a rule is wired up. The trade-off is that each installed file is a snapshot: editing a rule, or your own `local.md`, needs another `install.sh` run to reach the agents.
+
+If you'd rather have an agent resolve its own imports and pick up rule edits with no install step, pass `--no-expand` and the files are installed verbatim. It applies to every agent at once, so only use it if all of them support `@`.
+
+```bash
+$ ~/dotfiles/install.sh --no-expand
+```
+
+Tests live in `tests/` and need nothing installed — `install_test.sh` runs the real installer against a throwaway `$HOME`:
 
 ```bash
 $ ~/dotfiles/tests/expand_imports_test.sh
+$ ~/dotfiles/tests/install_test.sh
 ```
 
 ### Private context

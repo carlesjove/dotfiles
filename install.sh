@@ -3,9 +3,14 @@
 # Dotfiles installer & interactive sync script.
 # Idempotent, non-destructive, and asks confirmation at every step.
 #
-# Usage: install.sh [-y] [-h]
-#   -y   Non-interactive: accept the default answer for every prompt.
-#   -h   Show this help.
+# Usage: install.sh [-y] [-h] [--no-expand]
+#   -y            Non-interactive: accept the default answer for every prompt.
+#   -h            Show this help.
+#   --no-expand   Install each agent's instruction file verbatim, leaving its
+#                 `@` import lines for the agent to resolve itself. Only use
+#                 this if every agent you run supports them — Antigravity, for
+#                 one, does not, and would silently get none of the rules.
+#                 By default the imports are inlined at install time.
 #
 # Safe to re-run to pick up updates. Re-running never discards a local edit
 # without either backing it up first or leaving the file alone entirely.
@@ -16,6 +21,20 @@ set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ASSUME_DEFAULTS=false
+EXPAND_IMPORTS=true
+
+# getopts is short-option only, so pull the long options out first and hand it
+# what's left. `${short[@]+...}` keeps `set --` from inventing an empty argument
+# when every option was a long one.
+short_opts=()
+for arg in "$@"; do
+  case "$arg" in
+    --no-expand) EXPAND_IMPORTS=false ;;
+    --*) echo "Unknown option: $arg" >&2; exit 1 ;;
+    *) short_opts+=("$arg") ;;
+  esac
+done
+set -- ${short_opts[@]+"${short_opts[@]}"}
 
 while getopts ":yh" opt; do
   case "$opt" in
@@ -117,7 +136,7 @@ copy_file() {
 # Overwriting is always safe, so don't ask a keep-or-destroy question whose
 # every answer is wrong: "keep" strands the machine on stale rules, "overwrite"
 # would eat local edits if there were any. There are none — see seed_file.
-install_managed_file() {
+install_verbatim_file() {
   local src="$1"
   local dest="$2"
 
@@ -135,10 +154,12 @@ install_managed_file() {
   fi
 }
 
-# Same contract as install_managed_file, but for agents that do not resolve `@`
-# import lines: the file is installed with its imports replaced by the contents
-# of the files they point at. The installed copy is therefore a snapshot — a
-# rule edit needs another install.sh run to reach these agents.
+# Same contract as install_verbatim_file, but the file is installed with its `@`
+# imports replaced by the contents of the files they point at. This is the
+# default for every agent: whether a given one resolves `@` itself is its own
+# undocumented business, and an agent that doesn't would silently run with no
+# rules at all. The installed copy is therefore a snapshot — a rule or local.md
+# edit needs another install.sh run to reach the agents.
 install_expanded_file() {
   local src="$1"
   local dest="$2"
@@ -165,6 +186,17 @@ install_expanded_file() {
     echo "  ⏭️ Skipped $dest"
   fi
   rm -f "$built"
+}
+
+# Install an agent's main instruction file, inlining its imports unless
+# --no-expand was passed. Every agent goes through here, so the choice is the
+# user's once and applies everywhere.
+install_agent_file() {
+  if [[ "$EXPAND_IMPORTS" == true ]]; then
+    install_expanded_file "$1" "$2"
+  else
+    install_verbatim_file "$1" "$2"
+  fi
 }
 
 # Create dest from a template only if it is absent. Once it exists it belongs to
@@ -219,17 +251,17 @@ link_file "$DOTFILES_DIR/vimrc.bundles" "$HOME/.vimrc.bundles"
 
 echo ""
 echo "--- Claude Code Setup ---"
-install_managed_file "$DOTFILES_DIR/agents/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+# local.md is seeded before CLAUDE.md is installed because it is one of the
+# files CLAUDE.md imports — inlining can only pick it up once it exists.
 seed_file "$DOTFILES_DIR/agents/local.md.example" "$HOME/.claude/local.md"
+install_agent_file "$DOTFILES_DIR/agents/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 copy_file "$DOTFILES_DIR/agents/claude/settings.json" "$HOME/.claude/settings.json"
 sync_dir "$DOTFILES_DIR/agents/claude/commands" "$HOME/.claude/commands"
 
 echo ""
 echo "--- Antigravity Setup ---"
-# Antigravity ignores `@` import lines, so its GEMINI.md is installed with the
-# imports inlined. local.md is seeded first because it is one of them.
 seed_file "$DOTFILES_DIR/agents/local.md.example" "$HOME/.gemini/local.md"
-install_expanded_file "$DOTFILES_DIR/agents/antigravity/GEMINI.md" "$HOME/.gemini/GEMINI.md"
+install_agent_file "$DOTFILES_DIR/agents/antigravity/GEMINI.md" "$HOME/.gemini/GEMINI.md"
 # Antigravity's CLI reads its own copy; link it so the two cannot drift.
 link_file "$HOME/.gemini/GEMINI.md" "$HOME/.gemini/antigravity-cli/GEMINI.md"
 
