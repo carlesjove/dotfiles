@@ -70,5 +70,8 @@ export PATH="/usr/local/opt/postgres/bin:$PATH"
 # Added by Antigravity CLI installer
 export PATH="/Users/carles/.local/bin:$PATH"
 
+# Aider Ollama Configuration
+export OLLAMA_API_BASE=http://127.0.0.1:11434
+
 # opencode
 export PATH=/Users/carles/.opencode/bin:$PATH
