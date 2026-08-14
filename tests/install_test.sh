@@ -24,11 +24,13 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 AGENT_FILES=(
   ".claude/CLAUDE.md"
   ".gemini/GEMINI.md"
+  ".config/opencode/AGENTS.md"
 )
 
 LOCAL_FILES=(
   ".claude/local.md"
   ".gemini/local.md"
+  ".config/opencode/local.md"
 )
 
 failures=0
@@ -196,6 +198,12 @@ if cmp -s "$DOTFILES_DIR/agents/antigravity/GEMINI.md" "$raw_home/.gemini/GEMINI
   pass "GEMINI.md matches its source under --no-expand"
 else
   fail "GEMINI.md differs from its source under --no-expand"
+fi
+
+if cmp -s "$DOTFILES_DIR/agents/opencode/AGENTS.md" "$raw_home/.config/opencode/AGENTS.md"; then
+  pass "AGENTS.md matches its source under --no-expand"
+else
+  fail "AGENTS.md differs from its source under --no-expand"
 fi
 
 

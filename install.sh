@@ -259,6 +259,14 @@ copy_file "$DOTFILES_DIR/agents/claude/settings.json" "$HOME/.claude/settings.js
 sync_dir "$DOTFILES_DIR/agents/claude/commands" "$HOME/.claude/commands"
 
 echo ""
+echo "--- OpenCode Setup ---"
+# OpenCode reads its global rules from $XDG_CONFIG_HOME/opencode/AGENTS.md. It does
+# not resolve `@` imports itself, so the default expanded install is what gets it
+# the shared rules — see the note in agents/opencode/AGENTS.md.
+seed_file "$DOTFILES_DIR/agents/local.md.example" "$HOME/.config/opencode/local.md"
+install_agent_file "$DOTFILES_DIR/agents/opencode/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
+
+echo ""
 echo "--- Antigravity Setup ---"
 seed_file "$DOTFILES_DIR/agents/local.md.example" "$HOME/.gemini/local.md"
 install_agent_file "$DOTFILES_DIR/agents/antigravity/GEMINI.md" "$HOME/.gemini/GEMINI.md"
