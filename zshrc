@@ -69,3 +69,6 @@ export PATH="/usr/local/opt/postgres/bin:$PATH"
 
 # Added by Antigravity CLI installer
 export PATH="/Users/carles/.local/bin:$PATH"
+
+# opencode
+export PATH=/Users/carles/.opencode/bin:$PATH
