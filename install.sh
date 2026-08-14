@@ -266,6 +266,11 @@ install_agent_file "$DOTFILES_DIR/agents/antigravity/GEMINI.md" "$HOME/.gemini/G
 link_file "$HOME/.gemini/GEMINI.md" "$HOME/.gemini/antigravity-cli/GEMINI.md"
 
 echo ""
+echo "--- opencode Setup ---"
+seed_file "$DOTFILES_DIR/agents/local.md.example" "$HOME/.config/opencode/local.md"
+install_agent_file "$DOTFILES_DIR/agents/opencode/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
+
+echo ""
 echo "=========================================="
 echo " Setup complete!"
 echo "=========================================="

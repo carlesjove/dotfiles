@@ -24,11 +24,13 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 AGENT_FILES=(
   ".claude/CLAUDE.md"
   ".gemini/GEMINI.md"
+  ".config/opencode/AGENTS.md"
 )
 
 LOCAL_FILES=(
   ".claude/local.md"
   ".gemini/local.md"
+  ".config/opencode/local.md"
 )
 
 failures=0
@@ -132,6 +134,10 @@ echo "Test: an agent file keeps its own content alongside the inlined rules"
 assert_contains "GEMINI.md keeps its own content" \
   "$(cat "$default_home/.gemini/GEMINI.md" 2>/dev/null)" "Antigravity Guidelines"
 
+assert_contains "opencode AGENTS.md keeps its own content" \
+  "$(cat "$default_home/.config/opencode/AGENTS.md" 2>/dev/null)" \
+  "belong in ~/.config/opencode/local.md"
+
 
 echo "Test: a private file absent on this machine is a note, not a broken build"
 
@@ -196,6 +202,12 @@ if cmp -s "$DOTFILES_DIR/agents/antigravity/GEMINI.md" "$raw_home/.gemini/GEMINI
   pass "GEMINI.md matches its source under --no-expand"
 else
   fail "GEMINI.md differs from its source under --no-expand"
+fi
+
+if cmp -s "$DOTFILES_DIR/agents/opencode/AGENTS.md" "$raw_home/.config/opencode/AGENTS.md"; then
+  pass "opencode AGENTS.md matches its source under --no-expand"
+else
+  fail "opencode AGENTS.md differs from its source under --no-expand"
 fi
 
 
