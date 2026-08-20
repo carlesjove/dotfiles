@@ -7,6 +7,8 @@
 
 @~/dotfiles/agents/rules/tdd.md
 
+@~/dotfiles/agents/rules/refactoring.md
+
 ## This machine
 
 @~/.gemini/local.md

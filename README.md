@@ -33,7 +33,7 @@ After doing this you should open vim and run `PlugInstall`.
 
 AI coding assistant configurations live under `agents/` to keep root clean and modular:
 
-- `agents/rules/`: Shared, agent-agnostic guidelines (e.g. `tdd.md`).
+- `agents/rules/`: Shared, agent-agnostic guidelines (e.g. `tdd.md`, `refactoring.md`).
 - `agents/claude/`: Claude Code specific configuration (`CLAUDE.md`, `settings.json`, `commands/`).
 - `agents/antigravity/`: Antigravity specific configuration (`GEMINI.md`).
 - `agents/opencode/`: opencode specific configuration (`AGENTS.md`, installed to `~/.config/opencode/AGENTS.md`).
@@ -43,7 +43,7 @@ To prevent runtime state changes (such as model selection or permission allowlis
 
 - `agents/expand-imports.sh`: Inlines `@` imports so an agent doesn't have to resolve them itself. See below.
 
-`agents/rules/tdd.md` holds universal TDD guidelines and is imported by `CLAUDE.md`, `GEMINI.md` and `AGENTS.md` via `@` import lines.
+`agents/rules/` holds the universal guidelines — `tdd.md` (test-first workflow) and `refactoring.md` (behaviour-preserving changes) — each imported by `CLAUDE.md`, `GEMINI.md` and `AGENTS.md` via `@` import lines.
 
 ### Three kinds of file
 

@@ -111,8 +111,14 @@ for rel in "${AGENT_FILES[@]}"; do
   fi
 
   contents="$(cat "$file")"
-  assert_contains "$rel inlines the shared TDD rule" \
-    "$contents" "Test-Driven Development"
+  # Derived from agents/rules/ rather than hardcoded, because a rule that was
+  # never wired into an agent's import lines leaves no `@` behind for the check
+  # above to catch — only its missing content gives it away. Deriving the list
+  # means a new rule file is covered across every agent with no edit here.
+  for rule in "$DOTFILES_DIR"/agents/rules/*.md; do
+    assert_contains "$rel inlines $(basename "$rule")" \
+      "$contents" "$(head -n 1 "$rule")"
+  done
   assert_contains "$rel inlines the machine-local file" \
     "$contents" "Machine-local agent instructions"
 done
