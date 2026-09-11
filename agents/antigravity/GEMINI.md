@@ -11,6 +11,8 @@
 
 @~/dotfiles/agents/rules/code-style.md
 
+@~/dotfiles/agents/rules/git.md
+
 ## This machine
 
 @~/.gemini/local.md

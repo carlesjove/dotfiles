@@ -12,6 +12,7 @@ Write the test first. For every behaviour change:
 
 - Never write implementation code before its test exists.
 - If implementation code was already written, stop and say so. Don't backfill tests — tests written after the fact assert what the code does instead of what it should do.
+- Leave duplication in test code alone. Clarity and coverage beat DRY in tests.
 - Never report work as done because the code looks correct. Report it done when a test you ran proves it, and paste the output. If the tests didn't run, say why.
 
 ### When TDD doesn't fit
