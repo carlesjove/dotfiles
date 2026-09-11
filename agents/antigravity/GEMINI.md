@@ -9,6 +9,8 @@
 
 @~/dotfiles/agents/rules/refactoring.md
 
+@~/dotfiles/agents/rules/code-style.md
+
 ## This machine
 
 @~/.gemini/local.md
